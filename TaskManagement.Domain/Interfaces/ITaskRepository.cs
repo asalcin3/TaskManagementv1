@@ -1,0 +1,14 @@
+﻿using EntityTask = TaskManagement.Domain.Entities.Task;
+using SystemTask = System.Threading.Tasks;
+
+namespace TaskManagement.Domain.Interfaces {
+    public interface ITaskRepository 
+    {
+        SystemTask.Task<IEnumerable<EntityTask>> GetAllTasksAsync();
+        SystemTask.Task<EntityTask?> GetTaskById(int taskId);
+        SystemTask.Task InsertTask(EntityTask task);
+        SystemTask.Task DeleteTask(int taskId);
+        SystemTask.Task UpdateTask(EntityTask task);
+
+    }
+}
