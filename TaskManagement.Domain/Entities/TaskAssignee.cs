@@ -10,6 +10,8 @@ namespace TaskManagement.Domain.Entities
 {
     public class TaskAssignee
     {
+        [Key]
+        public long Id { get; set; }
         [Required]
         public DateTime DateTimeAssigned { get; set; }
 
