@@ -2,6 +2,7 @@ using TaskManagement.API.Extensions;
 using TaskManagement.Infrastructure.Context;
 using TaskManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using TaskManagement.API.Middlewares;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,8 @@ builder.Services.AddServices();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
+builder.Services.AddLogging();
+builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
 
 var app = builder.Build();
 
@@ -58,12 +61,14 @@ else
 //app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"); 
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseExceptionHandler();
 app.Run();
 
 
