@@ -1,3 +1,4 @@
+using brevo_csharp.Client;
 using TaskManagement.API.Extensions;
 using TaskManagement.Infrastructure.Context;
 using TaskManagement.Domain.Entities;
@@ -24,13 +25,13 @@ builder.Services.AddCors(options =>
                 .AllowAnyHeader();
         });
 });
-
 builder.Services.AddServices();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger();
 builder.Services.AddLogging();
 builder.Services.AddExceptionHandler<ExceptionHandlingMiddleware>();
+builder.Services.AddBrevoService(builder.Configuration);
 
 var app = builder.Build();
 
@@ -60,7 +61,7 @@ else
 
 //app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
-
+app.MapOpenApi();
 
 app.MapControllerRoute(
     name: "default",
@@ -68,7 +69,6 @@ app.MapControllerRoute(
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseExceptionHandler();
 app.Run();
 
 

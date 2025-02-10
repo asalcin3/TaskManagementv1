@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using TaskManagement.Domain.Exceptions;
 
 namespace TaskManagement.API.Middlewares
 {
@@ -30,6 +31,18 @@ namespace TaskManagement.API.Middlewares
             };
 
             httpContext.Response.StatusCode = problemDetails.Status.Value;
+
+            if (exception is NotFoundException)
+            {
+                problemDetails.Detail = exception.Message;
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+            }
+
+            if (exception is TaskNotFoundException)
+            {
+                problemDetails.Status = StatusCodes.Status404NotFound;
+                problemDetails.Detail = exception.Message;
+            }
 
             await httpContext.Response
                 .WriteAsJsonAsync(problemDetails, cancellationToken);
