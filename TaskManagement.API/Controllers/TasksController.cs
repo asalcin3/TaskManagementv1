@@ -26,6 +26,28 @@ namespace TaskManagement.API.Controllers
             var response = await _taskService.GetAllTasksAsync();
             return Ok(response);
         }
-        
+
+        [AllowAnonymous]
+        [HttpGet("getTaskById")]
+        public async Task<IActionResult> GetTaskById(long id)
+        {
+            var response = await _taskService.GetTaskByIdAsync(id);
+            return Ok(response);
+        }
+        [AllowAnonymous]
+        [HttpPost("createTask")]
+        public async Task<IActionResult> CretateTask([FromBody] CreateTaskDTO dto)
+        {
+            await _taskService.CreateTaskAsync(dto);
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpDelete("deleteTask")]
+        public async Task<IActionResult> DeleteTask(long id)
+        {
+            await _taskService.DeleteTaskAsync(id);
+            return Ok();
+        }
     }
 }

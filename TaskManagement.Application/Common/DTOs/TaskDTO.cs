@@ -12,4 +12,10 @@ namespace TaskManagement.Application.Common.DTOs
         public string Title { get; set; }
 
     }
+
+    public class CreateTaskDTO
+    {
+        public string Title { get; set; }
+    }
+
 }

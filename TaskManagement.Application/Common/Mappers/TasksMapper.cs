@@ -26,5 +26,13 @@ namespace TaskManagement.Application.Common.Mappers
             };
         }
 
+        public static Task MapCreateTask(this CreateTaskDTO source)
+        {
+            return new Task
+            {
+                Title = source.Title,
+            };
+        }
+
     }
 }

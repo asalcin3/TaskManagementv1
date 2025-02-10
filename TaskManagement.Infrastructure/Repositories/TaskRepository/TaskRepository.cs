@@ -15,7 +15,7 @@ namespace TaskManagement.Infrastructure.Repositories.TaskRepository
         {
             return await _context.Tasks.ToListAsync();
         }
-        public async SystemTask.Task<EntityTask?> GetTaskById(int taskId)
+        public async SystemTask.Task<EntityTask?> GetTaskById(long taskId)
         {
             return await _context.Tasks.FindAsync(taskId);
         }
@@ -26,10 +26,11 @@ namespace TaskManagement.Infrastructure.Repositories.TaskRepository
              await _context.SaveChangesAsync();
         }
 
-        public async SystemTask.Task DeleteTask(int taskId)
+        public async SystemTask.Task DeleteTask(long taskId)
         {
             var task = GetTaskById(taskId);
             context.Remove(task);
+            await _context.SaveChangesAsync();
         }
 
         public async SystemTask.Task UpdateTask(EntityTask task)

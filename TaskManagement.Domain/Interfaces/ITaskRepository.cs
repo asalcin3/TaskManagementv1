@@ -5,9 +5,9 @@ namespace TaskManagement.Domain.Interfaces {
     public interface ITaskRepository 
     {
         SystemTask.Task<IEnumerable<EntityTask>> GetAllTasksAsync();
-        SystemTask.Task<EntityTask?> GetTaskById(int taskId);
+        SystemTask.Task<EntityTask?> GetTaskById(long taskId);
         SystemTask.Task InsertTask(EntityTask task);
-        SystemTask.Task DeleteTask(int taskId);
+        SystemTask.Task DeleteTask(long taskId);
         SystemTask.Task UpdateTask(EntityTask task);
 
     }
