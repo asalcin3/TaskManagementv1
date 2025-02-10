@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskManagement.Application.Common.DTOs;
 using TaskManagement.Application.Common.Mappers;
+using TaskManagement.Domain.Exceptions;
 using TaskManagement.Domain.Interfaces;
 
 namespace TaskManagement.Application.Services
@@ -14,7 +15,8 @@ namespace TaskManagement.Application.Services
         Task<List<TaskDTO>> GetAllTasksAsync();
         Task<TaskDTO> GetTaskByIdAsync(long taskId);
         Task CreateTaskAsync(CreateTaskDTO dto);
-        Task DeleteTaskAsync(long taskId);
+        Task UpdateTaskAsync(long id, TaskDTO dto);
+        Task<List<TaskDTO>> DeleteTaskAsync(long taskId);
     }
     public class TaskService(ITaskRepository taskRepository) : ITaskService
     {
@@ -31,7 +33,7 @@ namespace TaskManagement.Application.Services
         public async Task<TaskDTO> GetTaskByIdAsync(long id)
         {
             var task = await _taskRepository.GetTaskById(id);
-            if (task is null) throw new ArgumentException("Task with that id is not found");
+            if (task is null) throw new TaskNotFoundException("Task with that id does not exist");
           
             return task.ToDto();
 
@@ -40,12 +42,29 @@ namespace TaskManagement.Application.Services
         public async Task CreateTaskAsync(CreateTaskDTO dto)
         {
             if (string.IsNullOrEmpty(dto.Title)) throw new Exception("Title can't be empty");
+            if (string.IsNullOrEmpty(dto.Description)) throw new ArgumentException("Description can't be empty");
              await _taskRepository.InsertTask(dto.MapCreateTask());
         }
-
-        public async Task DeleteTaskAsync(long taskId)
+        public async Task UpdateTaskAsync(long id, TaskDTO dto)
         {
-            await _taskRepository.DeleteTask(taskId);
+            var taskFromDb = await _taskRepository.GetTaskById(id);
+            if (taskFromDb is null) throw new TaskNotFoundException("Task with that ID does not exist");
+            if (taskFromDb.Title != dto.Title)
+            {
+                taskFromDb.Title = dto.Title;
+            }
+
+            if (taskFromDb.Description != dto.Description)
+            {
+                taskFromDb.Description = dto.Description;
+            }
+
+            await _taskRepository.UpdateTask(taskFromDb);
+        }
+        public async Task<List<TaskDTO>> DeleteTaskAsync(long taskId)
+        {
+            var tasks = await _taskRepository.DeleteTask(taskId);
+            return tasks.Select(t => t.ToDto()).ToList();
         }
     }
 }

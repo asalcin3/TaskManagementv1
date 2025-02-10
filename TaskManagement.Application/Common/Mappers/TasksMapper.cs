@@ -11,8 +11,10 @@ namespace TaskManagement.Application.Common.Mappers
             return new TaskDTO
             {
                 Id = entity.Id,
-                Title = entity.Title
-      
+                Title = entity.Title,
+                Description = entity.Description
+
+
             };
         }
 
@@ -22,6 +24,7 @@ namespace TaskManagement.Application.Common.Mappers
             {
                 Id = dto.Id,
                 Title = dto.Title,
+                Description = dto.Description
               
             };
         }
@@ -31,6 +34,8 @@ namespace TaskManagement.Application.Common.Mappers
             return new Task
             {
                 Title = source.Title,
+                Description = source.Description
+
             };
         }
 

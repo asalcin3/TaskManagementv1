@@ -7,7 +7,7 @@ namespace TaskManagement.Domain.Interfaces {
         SystemTask.Task<IEnumerable<EntityTask>> GetAllTasksAsync();
         SystemTask.Task<EntityTask?> GetTaskById(long taskId);
         SystemTask.Task InsertTask(EntityTask task);
-        SystemTask.Task DeleteTask(long taskId);
+        SystemTask.Task<List<EntityTask>> DeleteTask(long taskId);
         SystemTask.Task UpdateTask(EntityTask task);
 
     }

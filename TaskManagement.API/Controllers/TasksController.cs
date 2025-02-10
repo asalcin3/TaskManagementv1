@@ -20,7 +20,7 @@ namespace TaskManagement.API.Controllers
 
      
         [AllowAnonymous]
-        [HttpGet("getAllTasks")]
+        [HttpGet]
         public async Task<IActionResult> GetAllTasks()
         {
             var response = await _taskService.GetAllTasksAsync();
@@ -28,26 +28,33 @@ namespace TaskManagement.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("getTaskById")]
-        public async Task<IActionResult> GetTaskById(long id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTaskById([FromRoute] long id)
         {
             var response = await _taskService.GetTaskByIdAsync(id);
             return Ok(response);
         }
         [AllowAnonymous]
-        [HttpPost("createTask")]
-        public async Task<IActionResult> CretateTask([FromBody] CreateTaskDTO dto)
+        [HttpPost]
+        public async Task<IActionResult> CreateTask([FromBody] CreateTaskDTO dto)
         {
             await _taskService.CreateTaskAsync(dto);
             return Ok();
         }
+        [AllowAnonymous]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTask([FromRoute] long id, [FromBody] TaskDTO dto)
+        {
+            await _taskService.UpdateTaskAsync(id, dto);
+            return Ok();
+        }
 
         [AllowAnonymous]
-        [HttpDelete("deleteTask")]
+        [HttpDelete("task/{id}")]
         public async Task<IActionResult> DeleteTask(long id)
         {
-            await _taskService.DeleteTaskAsync(id);
-            return Ok();
+           var response = await _taskService.DeleteTaskAsync(id);
+            return Ok(response);
         }
     }
 }
