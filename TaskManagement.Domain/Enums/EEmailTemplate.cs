@@ -4,9 +4,11 @@ namespace TaskManagement.Domain.Enums;
 
 public enum EEmailTemplate
 {
-    [Description("TM - Task reminder email")]
-    TaskReminder = 5,
-    [Description("TM - Task finished email")] 
-    TaskFinished = 10,
-    
+    [Description("TM - Task created email")]
+    TaskCreated = 1,
+    [Description("TM - Task deleted email")] 
+    TaskDeleted = 2,
+    [Description("TM - Task completed email")]
+    TaskCompleted = 3,
+
 }

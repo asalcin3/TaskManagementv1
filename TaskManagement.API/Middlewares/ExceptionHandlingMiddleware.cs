@@ -35,10 +35,10 @@ namespace TaskManagement.API.Middlewares
             if (exception is NotFoundException)
             {
                 problemDetails.Detail = exception.Message;
-                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Status = StatusCodes.Status404NotFound;
             }
 
-            if (exception is TaskNotFoundException)
+            else if (exception is TaskNotFoundException)
             {
                 problemDetails.Status = StatusCodes.Status404NotFound;
                 problemDetails.Detail = exception.Message;
