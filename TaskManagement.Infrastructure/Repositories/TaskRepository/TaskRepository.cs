@@ -20,10 +20,11 @@ namespace TaskManagement.Infrastructure.Repositories.TaskRepository
             return await _context.Tasks.FindAsync(taskId);
         }
 
-        public async SystemTask.Task InsertTask(EntityTask task)
+        public async SystemTask.Task<EntityTask> InsertTask(EntityTask task)
         {
-             context.Add(task);
+             var taskDb = context.Add(task);
              await _context.SaveChangesAsync();
+             return taskDb.Entity;
         }
 
         public async SystemTask.Task<List<EntityTask>> DeleteTask(long taskId)

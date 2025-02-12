@@ -26,6 +26,9 @@ namespace TaskManagement.Infrastructure.Context
            
         }
         public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskAssignee> TaskAssignees { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<EmailTemplates> EmailTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

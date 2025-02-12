@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TaskManagement.Domain.Entities
 {
@@ -17,6 +12,7 @@ namespace TaskManagement.Domain.Entities
         public string Description { get; set; }
         [Required]
         public DateTime DateDue { get; set; }
+        public bool IsCompleted { get; set; }
         public List<TaskAssignee> Assignees { get; set; }
 
     }

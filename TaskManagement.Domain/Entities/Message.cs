@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MimeKit;
 using TaskManagement.Domain.Enums;
 
 namespace TaskManagement.Domain.Entities
@@ -21,23 +15,14 @@ namespace TaskManagement.Domain.Entities
         [Column(TypeName = "varchar(MAX)")]
         public string Body { get; set; }
 
-        // we use this to schedule messages
-        public DateTime ToSendOn { get; set; }
         public DateTime? WasSentOn { get; set; }
         public EMessageStatus Status { get; set; }
-        public MessagePriority Priority { get; set; }
         public required EDeliveryMethod DeliveryMethod { get; set; }
 
         [Column(TypeName = "varchar(MAX)")]
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
         public EEmailTemplate EmailTemplateType { get; set; }
 
-        [Column(TypeName = "varchar(200)")]
-        public string From { get; set; }
-
-        [Column(TypeName = "varchar(255)")]
-        public string FromEmail { get; set; }
-        public int RetryCount { get; set; }
 
         /* =================== Navigation properties =================== */
         public long? SenderId { get; set; }

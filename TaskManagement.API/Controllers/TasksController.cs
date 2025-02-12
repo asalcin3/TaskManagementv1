@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Application.Common.DTOs;
 using TaskManagement.Application.Services;
@@ -8,6 +7,7 @@ using TaskManagement.Application.Services;
 
 namespace TaskManagement.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TasksController : ControllerBase
@@ -34,14 +34,14 @@ namespace TaskManagement.API.Controllers
             var response = await _taskService.GetTaskByIdAsync(id);
             return Ok(response);
         }
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CreateTask([FromBody] CreateTaskDTO dto)
         {
             await _taskService.CreateTaskAsync(dto);
             return Ok();
         }
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, User")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTask([FromRoute] long id, [FromBody] TaskDTO dto)
         {
@@ -49,7 +49,7 @@ namespace TaskManagement.API.Controllers
             return Ok();
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("task/{id}")]
         public async Task<IActionResult> DeleteTask(long id)
         {

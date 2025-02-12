@@ -12,8 +12,8 @@ using TaskManagement.Infrastructure.Context;
 namespace TaskManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(TMContext))]
-    [Migration("20250210195219_TaskAssigneeMigration")]
-    partial class TaskAssigneeMigration
+    [Migration("20250212200943_ErrorMessageNullablePropertyMigration")]
+    partial class ErrorMessageNullablePropertyMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace TaskManagement.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("dbo")
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -114,6 +114,93 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.ToTable("UserTokens", "dbo");
                 });
 
+            modelBuilder.Entity("TaskManagement.Domain.Entities.EmailTemplates", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("varchar(MAX)");
+
+                    b.Property<int>("EmailTemplate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailTemplate")
+                        .IsUnique();
+
+                    b.ToTable("EmailTemplates", "dbo");
+                });
+
+            modelBuilder.Entity("TaskManagement.Domain.Entities.Message", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("varchar(MAX)");
+
+                    b.Property<int>("DeliveryMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmailTemplateType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("varchar(MAX)");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("FromEmail")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<long?>("ReceiverId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("SenderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<DateTime>("ToSendOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("WasSentOn")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages", "dbo");
+                });
+
             modelBuilder.Entity("TaskManagement.Domain.Entities.Role", b =>
                 {
                     b.Property<long>("Id")
@@ -159,6 +246,9 @@ namespace TaskManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -197,7 +287,7 @@ namespace TaskManagement.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TaskAssignee", "dbo");
+                    b.ToTable("TaskAssignees", "dbo");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.User", b =>
@@ -319,6 +409,21 @@ namespace TaskManagement.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TaskManagement.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("TaskManagement.Domain.Entities.User", "Receiver")
+                        .WithMany("MessageReceiver")
+                        .HasForeignKey("ReceiverId");
+
+                    b.HasOne("TaskManagement.Domain.Entities.User", "Sender")
+                        .WithMany("MessageSender")
+                        .HasForeignKey("SenderId");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("TaskManagement.Domain.Entities.TaskAssignee", b =>
                 {
                     b.HasOne("TaskManagement.Domain.Entities.Task", "Task")
@@ -360,6 +465,10 @@ namespace TaskManagement.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.User", b =>
                 {
+                    b.Navigation("MessageReceiver");
+
+                    b.Navigation("MessageSender");
+
                     b.Navigation("TaskAssignees");
                 });
 #pragma warning restore 612, 618

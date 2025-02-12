@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-
-namespace TaskManagement.API.Extensions
+﻿namespace TaskManagement.API.Extensions
 {
     public static class IServiceCollectionSwaggerExtension
     {

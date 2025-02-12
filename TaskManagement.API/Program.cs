@@ -1,20 +1,66 @@
-using brevo_csharp.Client;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using TaskManagement.API.Extensions;
 using TaskManagement.Infrastructure.Context;
 using TaskManagement.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TaskManagement.API.Middlewares;
-
+using TaskManagement.Application.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+IHostEnvironment env = builder.Environment;
+var appSettings = env.IsDevelopment() ? "appsettings.Development.json" : "appsettings.json";
+builder.Configuration
+    .AddJsonFile($"{appSettings}", true, true);
+
+
+builder.Services.Configure<FrontEndHost>(
+    builder.Configuration.GetSection(
+        key: nameof(FrontEndHost))); //ovaj key nameof frontendhost mora bit isto kao tamo u app settings
+
+builder.Services.Configure<Jwt>(
+    builder.Configuration.GetSection(
+        key: nameof(Jwt)));
 
 var connectionString = builder.Configuration.GetConnectionString("ConnectionString");
 builder.Services.AddDbContext<TMContext>(options =>
     options.UseSqlServer(connectionString));
 
 
-builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<TMContext>();
+builder.Services.AddIdentity<User, Role>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddEntityFrameworkStores<TMContext>()
+    .AddDefaultTokenProviders();
+
+// Adding Authentication
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+
+// Adding Jwt Bearer
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:ValidAudience"],
+            ValidIssuer = builder.Configuration["Jwt:ValidIssuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"]))
+        };
+    });
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",

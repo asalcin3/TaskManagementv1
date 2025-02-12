@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManagement.Application.Common.DTOs;
+﻿using TaskManagement.Application.Common.DTOs;
 using TaskManagement.Application.Common.Mappers;
+using TaskManagement.Domain.Enums;
 using TaskManagement.Domain.Exceptions;
 using TaskManagement.Domain.Interfaces;
 
@@ -18,9 +14,22 @@ namespace TaskManagement.Application.Services
         Task UpdateTaskAsync(long id, TaskDTO dto);
         Task<List<TaskDTO>> DeleteTaskAsync(long taskId);
     }
-    public class TaskService(ITaskRepository taskRepository) : ITaskService
+    public class TaskService : ITaskService
     {
-        private readonly ITaskRepository _taskRepository = taskRepository;
+        private readonly ITaskRepository _taskRepository;
+        private readonly IUserService _userService;
+        private readonly IMessagesService _messagesService;
+
+        public TaskService(
+            ITaskRepository taskRepository, 
+            IUserService userService, 
+            IMessagesService messagesService
+            )
+        {
+            _taskRepository = taskRepository;
+            _userService = userService;
+            _messagesService = messagesService;
+        }
 
         public async Task<List<TaskDTO>> GetAllTasksAsync()
         {
@@ -43,7 +52,9 @@ namespace TaskManagement.Application.Services
         {
             if (string.IsNullOrEmpty(dto.Title)) throw new Exception("Title can't be empty");
             if (string.IsNullOrEmpty(dto.Description)) throw new ArgumentException("Description can't be empty");
-             await _taskRepository.InsertTask(dto.MapCreateTask());
+
+            var createdTask = await _taskRepository.InsertTask(dto.MapCreateTask());
+            await _messagesService.SentTaskEmail(createdTask.Id, EEmailTemplate.TaskCreated);
         }
         public async Task UpdateTaskAsync(long id, TaskDTO dto)
         {
@@ -58,12 +69,22 @@ namespace TaskManagement.Application.Services
             {
                 taskFromDb.Description = dto.Description;
             }
+            if(taskFromDb.IsCompleted != dto.IsCompleted) {
+
+                taskFromDb.IsCompleted = dto.IsCompleted;
+                
+                if (taskFromDb.IsCompleted)
+                {
+                    await _messagesService.SentTaskEmail(taskFromDb.Id, EEmailTemplate.TaskCompleted);
+                }
+            }
 
             await _taskRepository.UpdateTask(taskFromDb);
         }
         public async Task<List<TaskDTO>> DeleteTaskAsync(long taskId)
         {
             var tasks = await _taskRepository.DeleteTask(taskId);
+            await _messagesService.SentTaskEmail(taskId, EEmailTemplate.TaskDeleted);
             return tasks.Select(t => t.ToDto()).ToList();
         }
     }

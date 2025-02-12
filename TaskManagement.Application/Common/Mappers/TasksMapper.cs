@@ -12,6 +12,7 @@ namespace TaskManagement.Application.Common.Mappers
             {
                 Id = entity.Id,
                 Title = entity.Title,
+                IsCompleted = entity.IsCompleted,
                 Description = entity.Description
 
 
@@ -24,7 +25,8 @@ namespace TaskManagement.Application.Common.Mappers
             {
                 Id = dto.Id,
                 Title = dto.Title,
-                Description = dto.Description
+                Description = dto.Description,
+                IsCompleted = dto.IsCompleted,
               
             };
         }
@@ -34,8 +36,8 @@ namespace TaskManagement.Application.Common.Mappers
             return new Task
             {
                 Title = source.Title,
-                Description = source.Description
-
+                Description = source.Description,
+                IsCompleted = source.IsCompleted,
             };
         }
 

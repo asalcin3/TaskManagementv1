@@ -12,8 +12,8 @@ using TaskManagement.Infrastructure.Context;
 namespace TaskManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(TMContext))]
-    [Migration("20250211195649_EmailTemplateTableMigration")]
-    partial class EmailTemplateTableMigration
+    [Migration("20250212201834_RemovedUnusedPropertiesMiration")]
+    partial class RemovedUnusedPropertiesMiration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace TaskManagement.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("dbo")
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -114,6 +114,33 @@ namespace TaskManagement.Infrastructure.Migrations
                     b.ToTable("UserTokens", "dbo");
                 });
 
+            modelBuilder.Entity("TaskManagement.Domain.Entities.EmailTemplates", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("varchar(MAX)");
+
+                    b.Property<int>("EmailTemplate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmailTemplate")
+                        .IsUnique();
+
+                    b.ToTable("EmailTemplates", "dbo");
+                });
+
             modelBuilder.Entity("TaskManagement.Domain.Entities.Message", b =>
                 {
                     b.Property<long>("Id")
@@ -133,25 +160,10 @@ namespace TaskManagement.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ErrorMessage")
-                        .IsRequired()
                         .HasColumnType("varchar(MAX)");
-
-                    b.Property<string>("From")
-                        .IsRequired()
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("FromEmail")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("int");
 
                     b.Property<long?>("ReceiverId")
                         .HasColumnType("bigint");
-
-                    b.Property<int>("RetryCount")
-                        .HasColumnType("int");
 
                     b.Property<long?>("SenderId")
                         .HasColumnType("bigint");
@@ -163,9 +175,6 @@ namespace TaskManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(500)");
 
-                    b.Property<DateTime>("ToSendOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime?>("WasSentOn")
                         .HasColumnType("datetime2");
 
@@ -175,7 +184,7 @@ namespace TaskManagement.Infrastructure.Migrations
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Message", "dbo");
+                    b.ToTable("Messages", "dbo");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.Role", b =>
@@ -223,6 +232,9 @@ namespace TaskManagement.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -261,7 +273,7 @@ namespace TaskManagement.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TaskAssignee", "dbo");
+                    b.ToTable("TaskAssignees", "dbo");
                 });
 
             modelBuilder.Entity("TaskManagement.Domain.Entities.User", b =>
