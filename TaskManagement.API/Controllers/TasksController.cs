@@ -34,8 +34,8 @@ namespace TaskManagement.API.Controllers
             var response = await _taskService.GetTaskWithAssigneesAsync(id);
             return Ok(response);
         }
-        
-        [AllowAnonymous]
+
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTaskById([FromRoute] long id)
         {
