@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TaskManagement.API.Middlewares;
 using TaskManagement.Application.Options;
+using TaskManagement.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 IHostEnvironment env = builder.Environment;
@@ -83,9 +84,11 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    //replace DataContext with your Db Context name
     var dataContext = scope.ServiceProvider.GetRequiredService<TMContext>();
     dataContext.Database.Migrate();
+    var services = scope.ServiceProvider;
+    await SeedUser.Initialize(services);
+
 }
 
 if (app.Environment.IsDevelopment())
