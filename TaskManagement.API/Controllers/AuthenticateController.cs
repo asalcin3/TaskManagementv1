@@ -82,10 +82,13 @@ namespace TaskManagement.API.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
+        
+            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
+                await _roleManager.CreateAsync(new Role(UserRoles.User));
+
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
-            }
+            
+
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 

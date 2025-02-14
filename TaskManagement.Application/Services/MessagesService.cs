@@ -38,14 +38,7 @@ namespace TaskManagement.Application.Services
             var taskEmailTemplate = await _emailTemplateRepository.GetEmailTemplate(emailTemplate);
             var messageBody = PopulateBodyMessage(taskEmailTemplate, taskId);
             var messages = new List<Message>();
-            var user = new User
-            {
-                Id = 7,
-                Email = "asalcin3@etf.unsa.ba",
-                UserName = "asalcin3@etf.unsa.ba",
 
-            };
-            recipients.Add(user);
             foreach (var recipient in recipients)
             {
                 var message = await SendEmailToRecipient(recipient, taskEmailTemplate, messageBody);
