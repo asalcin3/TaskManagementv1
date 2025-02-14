@@ -41,6 +41,11 @@ namespace TaskManagement.API.Middlewares
                 problemDetails.Status = StatusCodes.Status404NotFound;
                 problemDetails.Detail = exception.Message;
             }
+            else if (exception is TaskRequired)
+            {
+                problemDetails.Status = StatusCodes.Status400BadRequest;
+                problemDetails.Detail = exception.Message;
+            }
 
             await httpContext.Response
                 .WriteAsJsonAsync(problemDetails, cancellationToken);

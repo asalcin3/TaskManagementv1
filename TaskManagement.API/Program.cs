@@ -18,7 +18,7 @@ builder.Configuration
 
 builder.Services.Configure<FrontEndHost>(
     builder.Configuration.GetSection(
-        key: nameof(FrontEndHost))); //ovaj key nameof frontendhost mora bit isto kao tamo u app settings
+        key: nameof(FrontEndHost)));
 
 builder.Services.Configure<Jwt>(
     builder.Configuration.GetSection(
@@ -37,7 +37,7 @@ builder.Services.AddIdentity<User, Role>(options =>
     .AddEntityFrameworkStores<TMContext>()
     .AddDefaultTokenProviders();
 
-// Adding Authentication
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -92,20 +92,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 
-
-    //app.UseSwagger();
-    //app.UseSwaggerUI(c =>
-    //{
-    //    c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
-    //});
 }
 else
 {
     app.UseHsts();
-   // app.UseHttpsRedirection();
 }
 
-//app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.MapOpenApi();
 

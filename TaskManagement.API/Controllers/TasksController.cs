@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TaskManagement.Application.Common.DTOs;
 using TaskManagement.Application.Services;
+using static TaskManagement.Application.Common.DTOs.TaskDTO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,7 +27,14 @@ namespace TaskManagement.API.Controllers
             var response = await _taskService.GetAllTasksAsync();
             return Ok(response);
         }
-
+        [AllowAnonymous]
+        [HttpGet("task-with-assignees/{id}")]
+        public async Task<IActionResult> GetTasksWithAssigneesAsync([FromRoute] long id)
+        {
+            var response = await _taskService.GetTaskWithAssigneesAsync(id);
+            return Ok(response);
+        }
+        
         [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTaskById([FromRoute] long id)
@@ -36,14 +44,14 @@ namespace TaskManagement.API.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] CreateTaskDTO dto)
+        public async Task<IActionResult> CreateTask([FromBody] TaskDTO.CreateTaskDTO dto)
         {
             await _taskService.CreateTaskAsync(dto);
             return Ok();
         }
         [Authorize(Roles = "Admin, User")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask([FromRoute] long id, [FromBody] TaskDTO dto)
+        public async Task<IActionResult> UpdateTask([FromRoute] long id, [FromBody] UpdateTaskDTO dto)
         {
             await _taskService.UpdateTaskAsync(id, dto);
             return Ok();

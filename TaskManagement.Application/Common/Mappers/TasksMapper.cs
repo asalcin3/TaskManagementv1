@@ -13,8 +13,9 @@ namespace TaskManagement.Application.Common.Mappers
                 Id = entity.Id,
                 Title = entity.Title,
                 IsCompleted = entity.IsCompleted,
-                Description = entity.Description
-
+                Description = entity.Description,
+                DateDue = entity.DateDue,
+                Assignees = entity.Assignees?.Select(a => a.UserId).ToList() ?? new List<long>()
 
             };
         }
@@ -25,13 +26,14 @@ namespace TaskManagement.Application.Common.Mappers
             {
                 Id = dto.Id,
                 Title = dto.Title,
+                DateDue = dto.DateDue,
                 Description = dto.Description,
                 IsCompleted = dto.IsCompleted,
               
             };
         }
 
-        public static Task MapCreateTask(this CreateTaskDTO source)
+        public static Task MapCreateTask(this TaskDTO.CreateTaskDTO source)
         {
             return new Task
             {

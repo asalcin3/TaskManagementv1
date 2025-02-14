@@ -13,8 +13,20 @@ namespace TaskManagement.Infrastructure.Repositories.TaskRepository
 
         public async SystemTask.Task<IEnumerable<EntityTask>> GetAllTasksAsync()
         {
-            return await _context.Tasks.Include(ta => ta.Assignees).ToListAsync();
+            return await _context.Tasks.ToListAsync();
         }
+
+        public async Task<EntityTask> GetTaskWithAssigneesAsync(long taskId)
+        {
+            return await _context.Tasks
+                .Include(ta => ta.Assignees)
+                .ThenInclude(u => u.User)
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Where(t => t.Id == taskId)
+                .SingleOrDefaultAsync() ?? throw new ("Task not found");
+        }
+
         public async SystemTask.Task<EntityTask?> GetTaskById(long taskId)
         {
             return await _context.Tasks.FindAsync(taskId);
