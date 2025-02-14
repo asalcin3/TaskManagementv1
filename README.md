@@ -28,13 +28,16 @@ It is a simple CRUD application with integrated Brevo(SendinBlue) for sending em
    
  **Frontend Setup**
    1. Navigate to the frontend directory
-        TaskManagementSystem/taskmanagementclient
+
+      - TaskManagementSystem/taskmanagementclient
       
    2. Install dependencies
-       npm install
+      
+         - npm install
       
    3. Start Vue app
-        npm run serve
+      
+        - npm run serve
         
 
    
